@@ -1,5 +1,15 @@
+import { IsString, IsNumber, IsOptional } from 'class-validator';
+
 export class UpdateProductDto {
-  readonly name: string;
+  @IsOptional()
+  @IsString()
+  readonly name?: string;
+
+  @IsOptional()
+  @IsString()
   readonly description?: string;
-  readonly price: number;
+
+  @IsOptional()
+  @IsNumber()
+  readonly price?: number;
 }
