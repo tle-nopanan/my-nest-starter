@@ -36,6 +36,13 @@ export class OrdersService {
   }
 
   async update(id: string, updateOrderDto: UpdateOrderDto): Promise<Order> {
+    const productResult = await this.productsService.findOne(
+      updateOrderDto.productId,
+    );
+
+    if (!productResult) {
+      throw new NotFoundException('product not found');
+    }
     const result = this.orderModel
       .findByIdAndUpdate(id, updateOrderDto, { new: true })
       .exec();
