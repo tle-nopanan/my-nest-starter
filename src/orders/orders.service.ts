@@ -5,6 +5,7 @@ import { Order, OrderDocument } from './schemas/order.schema';
 import { Model } from 'mongoose';
 
 import { ProductsService } from 'src/products/products.service';
+import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Injectable()
 export class OrdersService {
@@ -25,8 +26,34 @@ export class OrdersService {
     return result.save();
   }
 
+  async findAll(): Promise<Order[]> {
+    return this.orderModel.find().exec();
+  }
+
   async findOne(id: string): Promise<Order> {
     const order = this.orderModel.findById(id).populate('productId').exec();
     return order;
+  }
+
+  async update(id: string, updateOrderDto: UpdateOrderDto): Promise<Order> {
+    const result = this.orderModel
+      .findByIdAndUpdate(id, updateOrderDto, { new: true })
+      .exec();
+    if (!result) {
+      throw new NotFoundException('Order not found');
+    }
+    return result;
+  }
+
+  async remove(id: string) {
+    try {
+      const result = await this.orderModel.findByIdAndDelete(id).exec();
+      if (!result) {
+        throw new NotFoundException('id not found');
+      }
+      return { message: 'Delete successful' };
+    } catch (error) {
+      throw error;
+    }
   }
 }
